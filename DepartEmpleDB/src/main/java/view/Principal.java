@@ -15,7 +15,7 @@ public class Principal {
 //		DELETE
 
 		
-		System.out.println("Probando pull LDCEDENO");
+		
 		menuPpal();
 		
 		
