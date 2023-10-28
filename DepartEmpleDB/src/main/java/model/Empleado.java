@@ -11,4 +11,8 @@ public class Empleado {
 	private Double salario;
 	private Departamento departamento;
 
+	
+	public Empleado(Integer id) {
+		this();
+	}
 }
