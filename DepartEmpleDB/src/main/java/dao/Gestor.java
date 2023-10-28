@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -11,6 +12,8 @@ import model.Empleado;
 public class Gestor {
 
 	private Connection conexion = null;
+	private boolean comprobacion = false;
+	private PreparedStatement ps;
 
 	public Gestor() {
 		conexion = Bdd.getConnection();
@@ -18,14 +21,36 @@ public class Gestor {
 
 	}
 
-	public boolean add(Empleado emple) {
+	public boolean add(Empleado emple) throws SQLException {
+		String sentenceSQL = """
+				INSERT INTO empleado (id, nombre, salario, departamento) 
+				VALUES (?,?,?,?)
+				""";
+		ps = conexion.prepareStatement(sentenceSQL);
+		ps.setInt(1, emple.getId());
+		ps.setString(2, emple.getNombre());
+		ps.setDouble(3, emple.getSalario());
+		ps.setInt(4, emple.getDepartamento().getId());
 		
-		
-
+		comprobacion = ps.executeUpdate()>0;
+				
+		return comprobacion;
 	}
 
-	public boolean add(Departamento depart) {
+	public boolean add(Departamento depart) throws SQLException {
 
+		String sentenceSQL = """
+				INSERT INTO departamento (id, nombre, jefe) 
+				VALUES (?,?,?)
+				""";
+		ps = conexion.prepareStatement(sentenceSQL);
+		ps.setInt(1, depart.getId());
+		ps.setString(2, depart.getNombre());
+		ps.setInt(3, depart.getJefe().getId());
+		
+		comprobacion = ps.executeUpdate()>0;
+				
+		return comprobacion;
 	}
 
 	private Empleado leerEmple(ResultSet resultados) {
