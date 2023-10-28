@@ -2,6 +2,8 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 import model.Departamento;
 import model.Empleado;
@@ -17,6 +19,8 @@ public class Gestor {
 	}
 
 	public boolean add(Empleado emple) {
+		
+		
 
 	}
 
@@ -26,10 +30,49 @@ public class Gestor {
 
 	private Empleado leerEmple(ResultSet resultados) {
 
+		Integer id;
+		String nombre;
+		Double salario;
+		Departamento depart;
+		
+		//Con el resultado de la query (ResultSet) formamos el objeto por los campos de la tabla y lo devolvemos
+		
+		try {
+			
+			id = resultados.getInt("id");
+			nombre = resultados.getString("nombre");
+			salario = resultados.getDouble("salario");
+			//Leer departamentos para obtener id de departamento(?)
+			
+			
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+		}
+		
 	}
 
 	private Departamento leerDepart(ResultSet resultados) {
 
+		Integer id;
+		String nombre;
+		Empleado jefe;
+		
+		
+		//Con el resultado de la query (ResultSet) formamos el objeto por los campos de la tabla y lo devolvemos
+		
+		try {
+			
+			id = resultados.getInt("id");
+			nombre = resultados.getString("nombre");
+			//Leer empleados para obtener id de jefe(?)
+			
+			
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+		}
+		
 	}
 
 	public boolean actualizar(Empleado emple) {
@@ -38,6 +81,14 @@ public class Gestor {
 
 	public boolean actualizar(Departamento depart) {
 
+	}
+	
+	public List<Empleado> mostrarEmpleados() {
+		
+	}
+	
+	public List<Departamento> mostrarDepartamentos(){
+		
 	}
 
 	public void cerrarGestor() {
