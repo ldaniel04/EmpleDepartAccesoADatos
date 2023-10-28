@@ -5,7 +5,7 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Depart {
+public class Departamento {
 	private Integer id; 
 	private String nombre; 
 	private Empleado jefe; 

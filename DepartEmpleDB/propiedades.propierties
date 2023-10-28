@@ -5,7 +5,7 @@ dsn = jdbc:sqlite:agenda.sqlite
 
 
 # Conexión a MariaDB
-db=mariadb
+db = mariadb
 driver = org.mariadb.jdbc.Driver
 dsn = jdbc:mariadb://localhost/test
 user = root

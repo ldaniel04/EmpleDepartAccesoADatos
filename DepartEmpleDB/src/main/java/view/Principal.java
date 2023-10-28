@@ -1,5 +1,6 @@
 package view;
 
+import dao.Bdd;
 import io.IO;
 
 public class Principal {
@@ -14,7 +15,9 @@ public class Principal {
 //		UPDATE
 //		DELETE
 
-		System.out.println("COMPROBACION COMPLETADA ");
+
+
+
 		
 		menuPpal();
 		

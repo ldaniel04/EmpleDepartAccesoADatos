@@ -9,6 +9,6 @@ public class Empleado {
 	private Integer id; 
 	private String nombre; 
 	private Double salario;
-	private Depart departamento;
+	private Departamento departamento;
 
 }

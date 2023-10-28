@@ -7,7 +7,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class BBDD {
+public class Bdd {
 
 	/**
 	 * Conector a la base de datos
@@ -24,7 +24,7 @@ public class BBDD {
 	 * 
 	 * Establece una conexión con la base de datos
 	 */
-	private BBDD() {
+	private Bdd() {
 		try {
 			Properties prop = new Properties();
 			prop.load(new FileReader("propiedades.propierties"));
@@ -34,6 +34,7 @@ public class BBDD {
 			String dsn = prop.getProperty("dsn");
 			String user = prop.getProperty("user", "");
 			String pass = prop.getProperty("pass", "");
+
 
 			Class.forName(driver);
 			conn = DriverManager.getConnection(dsn, user, pass);
@@ -49,7 +50,7 @@ public class BBDD {
 	 */
 	public static Connection getConnection() {
 		if (conn == null) {
-			new BBDD();
+			new Bdd();
 		}
 		return conn;
 	}
