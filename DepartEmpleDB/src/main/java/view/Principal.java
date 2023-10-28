@@ -1,6 +1,6 @@
 package view;
 
-import dao.Bdd;
+import dao.Gestor;
 import io.IO;
 
 public class Principal {
@@ -10,21 +10,14 @@ public class Principal {
 	 * @author José Antonio Fernández-Montes García, Jorge Balmisa Rosillo, Luis Daniel Cedeño Murillo
 	 */
 	public static void main(String[] args) {
-//		CREATE
-//		READ 
-//		UPDATE
-//		DELETE
-
-
-
-
 		
-		menuPpal();
+		Gestor gestor = new Gestor();
 		
+		menuPpal(gestor);
 		
 	}
 
-	private static void menuPpal() {
+	private static void menuPpal(Gestor gestor) {
 		int key;
 		
 		do {
@@ -56,6 +49,7 @@ public class Principal {
 			//delete();
 			break;
 		case 0:
+			cerrarGestor(gestor);
 			break;
 		default:
 			System.out.println("Has introducido un valor erroneo, vuele a intentarlo");
@@ -64,4 +58,9 @@ public class Principal {
 		
 		}while(key!=0);
 	}
+	
+	private static void cerrarGestor(Gestor gestor) {
+		gestor.cerrarGestor();
+	}
+
 }
