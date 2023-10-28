@@ -67,7 +67,15 @@ public class Gestor {
 			id = resultados.getInt("id");
 			nombre = resultados.getString("nombre");
 			salario = resultados.getDouble("salario");
+			//DanielSexy
+			
 			//Leer departamentos para obtener id de departamento(?)
+
+			//Guardamos el departamento donde está el empleado con un método leerdepart_2, que devolvería un objeto departamento
+			//y para crear ese objeto departamento le pasamos los campos que ya tenemos de empleado ?
+			//SELECT * FROM DEPARTAMENTO WHERE ID = id
+			
+			
 			
 			
 			
