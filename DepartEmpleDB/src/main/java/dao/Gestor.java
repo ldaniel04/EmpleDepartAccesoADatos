@@ -52,7 +52,7 @@ public class Gestor {
 		return comprobacion;
 	}
 
-	private Empleado leerEmple(ResultSet resultados) { //REVISARLOS DE NUEVO
+	private Empleado leerEmple(ResultSet resultados) { // REVISARLOS DE NUEVO
 
 		Integer id;
 		String nombre;
@@ -70,21 +70,33 @@ public class Gestor {
 			salario = resultados.getDouble("salario");
 			departId = resultados.getInt("departamento");
 
-			departamento = departamentoPorId(id,nombre,salario,departId);
+			departamento = buscarDepartamento(departId);
 
-			return new Empleado(id, nombre, salario, departamento);
-			// Guardamos el departamento donde está el empleado con un método leerdepart_2,
-			// que devolvería un objeto departamento
-			// y para crear ese objeto departamento le pasamos los campos que ya tenemos de
-			// empleado ?
-			// SELECT * FROM DEPARTAMENTO WHERE ID = id
+			Empleado emple = new Empleado(id, nombre, salario);
+
+			// Agregamos el jefe al departamento recuperado
+			emple.agregarJefe(departamento);
+
+			// Agregamos al empleado el departamento
+			departamento.agregarDepartamento(emple);
+
+			return emple;
+
+//			departamento = departamentoPorId(id,nombre,salario,departId);
+//
+//			return new Empleado(id, nombre, salario, departamento);
+// 			Guardamos el departamento donde está el empleado con un método leerdepart_2,
+// 			que devolvería un objeto departamento
+// 			y para crear ese objeto departamento le pasamos los campos que ya tenemos de
+//			 empleado ?
+//			 SELECT * FROM DEPARTAMENTO WHERE ID = id
 
 		} catch (SQLException e) {
 		}
 		return null;
 	}
 
-	private Departamento leerDepart(ResultSet resultados) {//REVISARLOS DE NUEVO
+	private Departamento leerDepart(ResultSet resultados) {// REVISARLOS DE NUEVO
 
 		Integer id;
 		String nombre;
@@ -100,46 +112,91 @@ public class Gestor {
 			nombre = resultados.getString("nombre");
 			idJefe = resultados.getInt("jefe");
 
-			jefe = empleadoPorId(idJefe);
+			// Primero buscamos el jefe que tiene el departamento
+			jefe = buscarJefe(idJefe);
 
-			return new Departamento(id, nombre, jefe);
+//			jefe = empleadoPorId(idJefe);
+
+//			return new Departamento(id, nombre);
+
+			// Segundo, creamos el departamento solo con los campos id y nombre
+			Departamento depart = new Departamento(id, nombre);
+			// Tercero, agregamos este departamento al jefe que hemos recuperado
+			depart.agregarDepartamento(jefe);
+			// Cuarto, agregamos el jefe a este departamento
+			jefe.agregarJefe(depart);
 
 		} catch (SQLException e) {
 		}
 		return null;
 	}
-	
-	private Departamento departamentoPorId(Integer idEmpleado, String nombre,  Double salario, Integer idDepartamento) throws SQLException {//REVISARLOS DE NUEVO
 
-		String nombreDepartamento;
-		Integer idDpto;
-		Departamento dp;
-		
-		String consultaSQL = """
-				SELECT nombre, jefe 
-				FROM departamentos 
+	private Empleado buscarJefe(Integer id) throws SQLException {
+		String sentencia = """
+				SELECT nombre, salario FROM empleados
 				WHERE id = ?
 				""";
-		ps = conexion.prepareStatement(consultaSQL);
-		ps.setInt(1, idDepartamento);
-		
+
+		ps = conexion.prepareStatement(sentencia);
+		ps.setInt(1, id);
 		ResultSet rs = ps.executeQuery();
-		while (rs.next()) {
-			idDpto = rs.getInt("id");
-			nombreDepartamento = rs.getString("nombre");
-		}
-		dp = new Departamento(idDpto, nombreDepartamento, new Empleado(idEmpleado, nombre, salario,idDpto));
-//		comprobacion = 
-	}
 
-	private Empleado empleadoPorId(int idEmpleado) {//REVISARLOS DE NUEVO
+		String nombreEmpleado = rs.getString("nombre");
+		Double salario = rs.getDouble("salario");
+
+		return new Empleado(id, nombreEmpleado, salario);
 
 	}
+
+	private Departamento buscarDepartamento(Integer id) throws SQLException {
+
+		String sentencia = """
+
+				SELECT nombre from departamentos
+				WHERE id = ?
+				""";
+
+		ps = conexion.prepareStatement(sentencia);
+		ps.setInt(1, id);
+		ResultSet rs = ps.executeQuery();
+
+		String nombreDepartamento = rs.getString("nombre");
+
+		return new Departamento(id, nombreDepartamento);
+
+	}
+
+//	private Departamento departamentoPorId(Integer idEmpleado, String nombre,  Double salario, Integer idDepartamento) throws SQLException {//REVISARLOS DE NUEVO
+//
+//		String nombreDepartamento;
+//		Integer idDpto;
+//		Departamento dp;
+//		
+//		String consultaSQL = """
+//				SELECT nombre, jefe 
+//				FROM departamentos 
+//				WHERE id = ?
+//				""";
+//		ps = conexion.prepareStatement(consultaSQL);
+//		ps.setInt(1, idDepartamento);
+//		
+//		ResultSet rs = ps.executeQuery();
+//		while (rs.next()) {
+//			idDpto = rs.getInt("id");
+//			nombreDepartamento = rs.getString("nombre");
+//		}
+//		dp = new Departamento(idDpto, nombreDepartamento, new Empleado(idEmpleado, nombre, salario,idDpto));
+////		comprobacion = 
+//	}
+
+//	private Empleado empleadoPorId(int idEmpleado) {//REVISARLOS DE NUEVO
+//
+//	}
 
 	public boolean actualizar(Empleado emple) throws SQLException {
 
 		String sentenciaSQL = """
-				UPDATE empleados 
+				UPDATE empleados
 				SET nombre = ?, salario = ?, departamento = ?
 				WHERE id = ?
 				""";
@@ -147,54 +204,52 @@ public class Gestor {
 		ps.setString(1, emple.getNombre());
 		ps.setDouble(2, emple.getSalario());
 		ps.setInt(3, emple.getDepartamento().getId());
-		
-		comprobacion = ps.executeUpdate()>0;
-		
+
+		comprobacion = ps.executeUpdate() > 0;
+
 		return comprobacion;
 	}
 
 	public boolean actualizar(Departamento depart) throws SQLException {
 
 		String sentenciaSQL = """
-				UPDATE departamentos 
+				UPDATE departamentos
 				SET nombre = ?, jefe = ?
 				WHERE id = ?
 				""";
 		ps = conexion.prepareStatement(sentenciaSQL);
 		ps.setString(1, depart.getNombre());
 		ps.setInt(2, depart.getJefe().getId());
-		
-		comprobacion = ps.executeUpdate()>0;
-		
+
+		comprobacion = ps.executeUpdate() > 0;
+
 		return comprobacion;
 	}
 
-	public List<Empleado> mostrarEmpleados() {//TOCAR CANDO METODOS PARA LEER LISTOS
+	public List<Empleado> mostrarEmpleados() {// TOCAR CANDO METODOS PARA LEER LISTOS
 
 	}
 
-	public List<Departamento> mostrarDepartamentos() {//TOCAR CANDO METODOS PARA LEER LISTOS
+	public List<Departamento> mostrarDepartamentos() {// TOCAR CANDO METODOS PARA LEER LISTOS
 
 	}
 
 	public boolean deleteJefe() throws SQLException {
-		
+
 		String setenciaSQL = """
 				UPDATE departamento
 				SET jefe = null
 				WHERE jefe = ?
 				""";
-		
-		String subSentenciaSQL ="""
-				DELETE * 
+
+		String subSentenciaSQL = """
+				DELETE *
 				FROM empleado
 				WHERE ID = ?
 				""";
 		ps = conexion.prepareStatement(setenciaSQL);
 	}
-	
-	
-	
+
 	public void cerrarGestor() {
 		Bdd.close();
 	}
@@ -217,7 +272,7 @@ public class Gestor {
 					""";
 			sentenciaDepartamentos = """
 					CREATE TABLE IF NOT EXISTS departamentos (
-					id INTEGER PRIMARY KEY,
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
 					nombre STRING NOT NULL,
 					jefe INTEGER NOT NULL
 					)
@@ -229,7 +284,7 @@ public class Gestor {
 
 			sentenciaEmpleados = """
 					CREATE TABLE IF NOT EXISTS empleados (
-					id INT AUTO_INCREMENT PRIMARY KEY,
+					id INT PRIMARY KEY AUTOINCREMENT,
 					nombre VARCHAR(255) NOT NULL,
 					salario DECIMAL(12,2) DEFAULT 0.0,
 					departamento INT NOT NULL
@@ -238,7 +293,7 @@ public class Gestor {
 					""";
 			sentenciaDepartamentos = """
 					CREATE TABLE IF NOT EXISTS departamentos (
-					id INT PRIMARY KEY,
+					id INT PRIMARY KEY AUTOINCREMENT,
 					nombre VARCHAR(255) NOT NULL,
 					jefe INT NOT NULL
 					)
@@ -253,7 +308,5 @@ public class Gestor {
 			// TODO: handle exception
 		}
 	}
-
-
 
 }
