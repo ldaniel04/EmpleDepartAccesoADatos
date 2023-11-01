@@ -77,6 +77,7 @@ public class Principal {
 			}
 			}catch (SQLException e) {
 				System.out.println("Problema");
+				e.printStackTrace();
 			}
 
 		} while (key != 0);
@@ -106,7 +107,7 @@ public class Principal {
 		
 		
 		//Si el departamento existe, recupera la información del mismo y se la pasa a el objeto empleado.
-		if(gestor.buscarDepartamento(idDepart) != null) {
+		if(gestor.buscarDepartamento(idDepart).getNombre() != null) {  //Gestor.metodo.getnombre!=null
 			depart = gestor.buscarDepartamento(idDepart);
 			
 			
@@ -120,7 +121,7 @@ public class Principal {
 			
 			//Creo un departamento sin jefe y lo añado, guardándome su id.
 			depart = new Departamento(nombreDepart);
-			idDepart = gestor.add(depart);
+			idDepart = gestor.addDepartSinJefe(depart);
 			
 			//Recupero el departamento recién creado
 			depart = gestor.buscarDepartamento(idDepart);

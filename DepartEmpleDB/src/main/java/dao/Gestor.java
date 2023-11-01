@@ -30,18 +30,17 @@ public class Gestor {
 				""";
 		ps = conexion.prepareStatement(sentenceSQL, java.sql.Statement.RETURN_GENERATED_KEYS);
 //		ps.setInt(1, emple.getId());
-		ps.setString(2, emple.getNombre());
-		ps.setDouble(3, emple.getSalario());
-		ps.setInt(4, emple.getDepartamento().getId());
+		ps.setString(1, emple.getNombre());
+		ps.setDouble(2, emple.getSalario());
+		ps.setInt(3, emple.getDepartamento().getId());
 
 		anadidos = ps.executeUpdate();
-		
-		if(anadidos > 0) {
+
+		if (anadidos > 0) {
 			ResultSet rs = ps.getGeneratedKeys();
 			rs.next();
-			 ultimaId = rs.getInt(1);
+			ultimaId = rs.getInt(1);
 		}
-		
 
 		return ultimaId;
 	}
@@ -54,18 +53,44 @@ public class Gestor {
 				""";
 		ps = conexion.prepareStatement(sentenceSQL, java.sql.Statement.RETURN_GENERATED_KEYS);
 //		ps.setInt(1, depart.getId());
-		ps.setString(2, depart.getNombre());
-		ps.setInt(3, depart.getJefe().getId());
+		ps.setString(1, depart.getNombre());
+		ps.setInt(2, depart.getJefe().getId());
 
 		anadidos = ps.executeUpdate();
-		
-		if(anadidos > 0) {
+
+		if (anadidos > 0) {
 			ResultSet rs = ps.getGeneratedKeys();
 			rs.next();
 			ultimaId = rs.getInt(1);
 		}
 
 		return ultimaId;
+	}
+
+	public int addDepartSinJefe(Departamento depart) throws SQLException {
+
+		int anadidos, ultimaId = 0;
+		String sentenceSQL = """
+				INSERT INTO departamentos (nombre)
+				VALUES (?)
+				""";
+		ps = conexion.prepareStatement(sentenceSQL, java.sql.Statement.RETURN_GENERATED_KEYS);
+//		ps.setInt(1, depart.getId());
+		ps.setString(1, depart.getNombre());
+
+		anadidos = ps.executeUpdate();
+
+		if (anadidos > 0) {
+			
+			ResultSet rs = ps.executeQuery("SELECT last_insert_rowid()");
+			if (rs.next()) {
+				ultimaId = rs.getInt(1);
+			};
+
+		}
+
+		return ultimaId;
+
 	}
 
 	private Empleado leerEmple(ResultSet resultados) { // REVISARLOS DE NUEVO
@@ -181,7 +206,6 @@ public class Gestor {
 		return new Departamento(id, nombreDepartamento);
 
 	}
-	
 
 //	private Departamento departamentoPorId(Integer idEmpleado, String nombre,  Double salario, Integer idDepartamento) throws SQLException {//REVISARLOS DE NUEVO
 //
@@ -245,23 +269,22 @@ public class Gestor {
 		return comprobacion;
 	}
 
-	public List<Empleado> mostrarEmpleados()throws SQLException {// TOCAR CANDO METODOS PARA LEER LISTOS
-		
+	public List<Empleado> mostrarEmpleados() throws SQLException {// TOCAR CANDO METODOS PARA LEER LISTOS
+
 		List<Empleado> lista = new ArrayList<Empleado>();
 		String sentencia = """
 				SELECT * FROM empleados
 				""";
-		
+
 		ps = conexion.prepareStatement(sentencia);
 		ResultSet rs = ps.executeQuery();
-		
-		while(rs.next()) {
+
+		while (rs.next()) {
 			lista.add(leerEmple(rs));
 		}
-		
-		
+
 		return lista;
-		
+
 	}
 
 	public List<Departamento> mostrarDepartamentos() throws SQLException {// TOCAR CANDO METODOS PARA LEER LISTOS
@@ -270,19 +293,18 @@ public class Gestor {
 		String sentencia = """
 				SELECT * FROM departamentos
 				""";
-		
+
 		ps = conexion.prepareStatement(sentencia);
 		ResultSet rs = ps.executeQuery();
-		
-		while(rs.next()) {
+
+		while (rs.next()) {
 			lista.add(leerDepart(rs));
 		}
-		
-		
+
 		return lista;
-		
+
 	}
-	
+
 //	public boolean deleteEmpleados(int id, String tabla) {
 //		
 //		String sentencia = """
@@ -324,17 +346,17 @@ public class Gestor {
 			sentenciaEmpleados = """
 					CREATE TABLE IF NOT EXISTS empleados (
 					id INTEGER PRIMARY KEY AUTOINCREMENT,
-					nombre STRING NOT NULL,
+					nombre TEXT NOT NULL,
 					salario REAL DEFAULT 0.0,
-					departamento INTEGER 
+					departamento INTEGER
 					)
 
 					""";
 			sentenciaDepartamentos = """
 					CREATE TABLE IF NOT EXISTS departamentos (
 					id INTEGER PRIMARY KEY AUTOINCREMENT,
-					nombre STRING NOT NULL,
-					jefe INTEGER 
+					nombre TEXT NOT NULL,
+					jefe INTEGER
 					)
 					""";
 
@@ -347,7 +369,7 @@ public class Gestor {
 					id INT PRIMARY KEY AUTOINCREMENT,
 					nombre VARCHAR(255) NOT NULL,
 					salario DECIMAL(12,2) DEFAULT 0.0,
-					departamento INT 
+					departamento INT
 					)
 
 					""";
