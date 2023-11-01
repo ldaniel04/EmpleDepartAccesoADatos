@@ -16,6 +16,14 @@ public class Departamento {
 		setNombre(nombre);
 	}
 	
+	public Departamento(String nombre) {
+		this(null, nombre, null);
+	}
+	
+	public Departamento(String nombre, Empleado jefe) {
+		this(null, nombre, jefe);
+	}
+	
 	/**
 	 * Asigna un departamento a un empleado
 	 * @param emple
@@ -24,5 +32,11 @@ public class Departamento {
 		emple.setDepartamento(this);
 	}
 	
-	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return id + "|" + nombre + "|" + jefe.getId(); 
+	}
 }
+
+

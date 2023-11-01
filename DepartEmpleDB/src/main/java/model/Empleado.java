@@ -5,7 +5,6 @@ import lombok.*;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 public class Empleado {
 	private Integer id; 
 	private String nombre; 
@@ -23,12 +22,29 @@ public class Empleado {
 		setSalario(salario);
 	}
 	
+	public Empleado(String nombre, Double salario) {
+		this(null, nombre, salario, null);
+		
+	}
+	
+	public Empleado(String nombre, Double salario, Departamento depart) {
+		this(null, nombre, salario, depart);
+	}
+	
+
 	/**
 	 * Asigna un jefe a un departamento
 	 * @param depart
 	 */
 	public void agregarJefe(Departamento depart) {
 		depart.setJefe(this);
+	}
+	
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return id + "|" + nombre + "|" + salario + "|" + departamento.getId();
 	}
 	
 }

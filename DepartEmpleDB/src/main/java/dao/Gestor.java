@@ -1,5 +1,6 @@
 package dao;
 
+import java.beans.Statement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,36 +22,50 @@ public class Gestor {
 
 	}
 
-	public boolean add(Empleado emple) throws SQLException {
+	public int add(Empleado emple) throws SQLException {
+		int anadidos, ultimaId = 0;
 		String sentenceSQL = """
-				INSERT INTO empleados (id, nombre, salario, departamento)
-				VALUES (?,?,?,?)
+				INSERT INTO empleados (nombre, salario, departamento)
+				VALUES (?,?,?)
 				""";
-		ps = conexion.prepareStatement(sentenceSQL);
-		ps.setInt(1, emple.getId());
+		ps = conexion.prepareStatement(sentenceSQL, java.sql.Statement.RETURN_GENERATED_KEYS);
+//		ps.setInt(1, emple.getId());
 		ps.setString(2, emple.getNombre());
 		ps.setDouble(3, emple.getSalario());
 		ps.setInt(4, emple.getDepartamento().getId());
 
-		comprobacion = ps.executeUpdate() > 0;
+		anadidos = ps.executeUpdate();
+		
+		if(anadidos > 0) {
+			ResultSet rs = ps.getGeneratedKeys();
+			rs.next();
+			 ultimaId = rs.getInt(1);
+		}
+		
 
-		return comprobacion;
+		return ultimaId;
 	}
 
-	public boolean add(Departamento depart) throws SQLException {
-
+	public int add(Departamento depart) throws SQLException {
+		int anadidos, ultimaId = 0;
 		String sentenceSQL = """
-				INSERT INTO departamentos (id, nombre, jefe)
-				VALUES (?,?,?)
+				INSERT INTO departamentos (nombre, jefe)
+				VALUES (?,?)
 				""";
-		ps = conexion.prepareStatement(sentenceSQL);
-		ps.setInt(1, depart.getId());
+		ps = conexion.prepareStatement(sentenceSQL, java.sql.Statement.RETURN_GENERATED_KEYS);
+//		ps.setInt(1, depart.getId());
 		ps.setString(2, depart.getNombre());
 		ps.setInt(3, depart.getJefe().getId());
 
-		comprobacion = ps.executeUpdate() > 0;
+		anadidos = ps.executeUpdate();
+		
+		if(anadidos > 0) {
+			ResultSet rs = ps.getGeneratedKeys();
+			rs.next();
+			ultimaId = rs.getInt(1);
+		}
 
-		return comprobacion;
+		return ultimaId;
 	}
 
 	private Empleado leerEmple(ResultSet resultados) { // REVISARLOS DE NUEVO
@@ -132,7 +147,7 @@ public class Gestor {
 		return null;
 	}
 
-	private Empleado buscarJefe(Integer id) throws SQLException {
+	public Empleado buscarJefe(Integer id) throws SQLException {
 		String sentencia = """
 				SELECT nombre, salario FROM empleados
 				WHERE id = ?
@@ -149,7 +164,7 @@ public class Gestor {
 
 	}
 
-	private Departamento buscarDepartamento(Integer id) throws SQLException {
+	public Departamento buscarDepartamento(Integer id) throws SQLException {
 
 		String sentencia = """
 
@@ -166,6 +181,7 @@ public class Gestor {
 		return new Departamento(id, nombreDepartamento);
 
 	}
+	
 
 //	private Departamento departamentoPorId(Integer idEmpleado, String nombre,  Double salario, Integer idDepartamento) throws SQLException {//REVISARLOS DE NUEVO
 //
@@ -202,9 +218,10 @@ public class Gestor {
 				WHERE id = ?
 				""";
 		ps = conexion.prepareStatement(sentenciaSQL);
-		ps.setString(1, emple.getNombre());
-		ps.setDouble(2, emple.getSalario());
-		ps.setInt(3, emple.getDepartamento().getId());
+		ps.setString(2, emple.getNombre());
+		ps.setDouble(3, emple.getSalario());
+		ps.setInt(4, emple.getDepartamento().getId());
+		ps.setInt(1, emple.getId());
 
 		comprobacion = ps.executeUpdate() > 0;
 
@@ -219,8 +236,9 @@ public class Gestor {
 				WHERE id = ?
 				""";
 		ps = conexion.prepareStatement(sentenciaSQL);
-		ps.setString(1, depart.getNombre());
-		ps.setInt(2, depart.getJefe().getId());
+		ps.setString(2, depart.getNombre());
+		ps.setInt(3, depart.getJefe().getId());
+		ps.setInt(1, depart.getId());
 
 		comprobacion = ps.executeUpdate() > 0;
 
@@ -264,6 +282,17 @@ public class Gestor {
 		return lista;
 		
 	}
+	
+//	public boolean deleteEmpleados(int id, String tabla) {
+//		
+//		String sentencia = """
+//				DELETE * FROM empleados WHERE ID = ?
+//				""";
+//		
+//		ps = conexion.prepareStatement(sentencia);
+//		
+//		
+//	}
 
 	public boolean deleteJefe() throws SQLException {
 
@@ -297,7 +326,7 @@ public class Gestor {
 					id INTEGER PRIMARY KEY AUTOINCREMENT,
 					nombre STRING NOT NULL,
 					salario REAL DEFAULT 0.0,
-					departamento INTEGER NOT NULL
+					departamento INTEGER 
 					)
 
 					""";
@@ -305,7 +334,7 @@ public class Gestor {
 					CREATE TABLE IF NOT EXISTS departamentos (
 					id INTEGER PRIMARY KEY AUTOINCREMENT,
 					nombre STRING NOT NULL,
-					jefe INTEGER NOT NULL
+					jefe INTEGER 
 					)
 					""";
 
@@ -318,7 +347,7 @@ public class Gestor {
 					id INT PRIMARY KEY AUTOINCREMENT,
 					nombre VARCHAR(255) NOT NULL,
 					salario DECIMAL(12,2) DEFAULT 0.0,
-					departamento INT NOT NULL
+					departamento INT 
 					)
 
 					""";
@@ -326,7 +355,7 @@ public class Gestor {
 					CREATE TABLE IF NOT EXISTS departamentos (
 					id INT PRIMARY KEY AUTOINCREMENT,
 					nombre VARCHAR(255) NOT NULL,
-					jefe INT NOT NULL
+					jefe INT
 					)
 					""";
 
