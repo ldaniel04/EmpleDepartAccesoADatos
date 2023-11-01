@@ -1,6 +1,7 @@
 package view;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import dao.Gestor;
 import io.IO;
@@ -23,9 +24,10 @@ public class Principal {
 	}
 
 	private static void menuPpal(Gestor gestor) {
-		int key;
+		int key = 0, subopcion = 0;
 
 		do {
+			try {
 			String contenido = """
 					Gestor de Empleados y Departamentos
 					Introduzca:
@@ -34,18 +36,31 @@ public class Principal {
 					3 - Para actualizar algun empleado o departamento
 					4 - Para eleminar algun empleado o departamento
 					 """;
+			System.out.println(contenido);
 			switch (key = IO.readInt()) {
 			case 1:
 				// add();
+//				System.out.println("1 Empleado\n2 Departamento");
+//				if (key == 1) {
+//					// Objeto.addEmpleado();
+//				} else {
+//					// Objeto.addDepart();
+//				}
+				
 				System.out.println("1 Empleado\n2 Departamento");
-				if (key == 1) {
-					// Objeto.addEmpleado();
-				} else {
-					// Objeto.addDepart();
+				subopcion = IO.readInt();
+				if(subopcion == 1) {
+					crearEmple(gestor);	
 				}
+				else {
+					crearDepart(gestor);
+				}
+				
 				break;
 			case 2:
 				// show();
+				
+				mostrarTodo(gestor);
 				break;
 			case 3:
 				// update();
@@ -60,6 +75,9 @@ public class Principal {
 				System.out.println("Has introducido un valor erroneo, vuele a intentarlo");
 				break;
 			}
+			}catch (SQLException e) {
+				System.out.println("Problema");
+			}
 
 		} while (key != 0);
 	}
@@ -68,7 +86,7 @@ public class Principal {
 		gestor.cerrarGestor();
 	}
 
-	public static void crearAmbos(Gestor gestor) {
+	public static void crearEmple(Gestor gestor) throws SQLException {
 		Integer idEmple, idDepart;
 		String nombreEmple, nombreDepart;
 		Double salario;
@@ -91,13 +109,66 @@ public class Principal {
 		// Agrega un jefe a un departamento
 		emple.agregarJefe(depart);
 
-		try {
+		
 			gestor.add(emple);
-		} catch (SQLException e) {
-			System.out.println("Problema al añadir al empleado");
-			return;
-		}
+		
 
+	}
+	
+	public static void crearDepart(Gestor gestor) throws SQLException {
+		
+		Integer idEmple, idDepart;
+		String nombreEmple, nombreDepart;
+		Double salario;
+
+		
+		System.out.println("Id de su departamento: ?");
+		idDepart = IO.readInt();
+		System.out.println("Nombre de su departamento: ?");
+		nombreDepart = IO.readString();
+		System.out.println("Id ?: ");
+		idEmple = IO.readInt();
+		System.out.println("Nombre: ?");
+		nombreEmple = IO.readString();
+		System.out.println("Salario: ?");
+		salario = IO.readDouble();
+		
+
+		Empleado emple = new Empleado(idEmple, nombreEmple, salario);
+		Departamento depart = new Departamento(idDepart, nombreDepart);
+		// Agrega un departamento a un empleado
+		depart.agregarDepartamento(emple);
+		// Agrega un jefe a un departamento
+		emple.agregarJefe(depart);
+
+		
+			gestor.add(depart);
+		
+		
+		
+	}
+	
+	private static void mostrarTodo(Gestor gestor) throws SQLException {
+		
+		List<Empleado> listaEmple;
+		List<Departamento> listaDepart;
+		
+		listaEmple = gestor.mostrarEmpleados();
+		listaDepart = gestor.mostrarDepartamentos();
+		
+		System.out.println("MOSTRANDO EMPLEADOS\n");
+		
+		for (Empleado empleados : listaEmple) {
+			System.out.println(empleados);
+		}
+		
+		System.out.println("\nMOSTRANDO DEPARTAMENTOS\n");
+		
+		for (Departamento departamentos : listaDepart) {
+			System.out.println(departamentos);
+		}
+		
+		
 	}
 
 }

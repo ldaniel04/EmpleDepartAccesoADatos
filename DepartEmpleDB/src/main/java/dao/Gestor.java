@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import model.Departamento;
 import model.Empleado;
@@ -226,12 +227,42 @@ public class Gestor {
 		return comprobacion;
 	}
 
-	public List<Empleado> mostrarEmpleados() {// TOCAR CANDO METODOS PARA LEER LISTOS
-
+	public List<Empleado> mostrarEmpleados()throws SQLException {// TOCAR CANDO METODOS PARA LEER LISTOS
+		
+		List<Empleado> lista = new ArrayList<Empleado>();
+		String sentencia = """
+				SELECT * FROM empleados
+				""";
+		
+		ps = conexion.prepareStatement(sentencia);
+		ResultSet rs = ps.executeQuery();
+		
+		while(rs.next()) {
+			lista.add(leerEmple(rs));
+		}
+		
+		
+		return lista;
+		
 	}
 
-	public List<Departamento> mostrarDepartamentos() {// TOCAR CANDO METODOS PARA LEER LISTOS
+	public List<Departamento> mostrarDepartamentos() throws SQLException {// TOCAR CANDO METODOS PARA LEER LISTOS
 
+		List<Departamento> lista = new ArrayList<Departamento>();
+		String sentencia = """
+				SELECT * FROM departamentos
+				""";
+		
+		ps = conexion.prepareStatement(sentencia);
+		ResultSet rs = ps.executeQuery();
+		
+		while(rs.next()) {
+			lista.add(leerDepart(rs));
+		}
+		
+		
+		return lista;
+		
 	}
 
 	public boolean deleteJefe() throws SQLException {
