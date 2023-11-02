@@ -31,7 +31,7 @@ public class Principal {
 				String contenido = """
 						Gestor de Empleados y Departamentos
 						Introduzca:
-						1 - Anyadir algun empleado o departamento
+						1 - Añadir algun empleado o departamento
 						2 - Para mostrar los empleados o departamentos
 						3 - Para actualizar algun empleado o departamento
 						4 - Para eleminar algun empleado o departamento
@@ -83,7 +83,7 @@ public class Principal {
 					cerrarGestor(gestor);
 					break;
 				default:
-					System.out.println("Has introducido un valor erroneo, vuele a intentarlo");
+					System.out.println("Has introducido un valor erroneo, vuelva a intentarlo");
 					break;
 				}
 			} catch (SQLException e) {
@@ -127,146 +127,6 @@ public class Principal {
 		gestor.addDepartamentoSinJefe(depart);
 
 	}
-
-//	public static void crearEmple(Gestor gestor) throws SQLException {
-//		//Por como están hechos lo métodos, estos objetos nos sirven para agregar y comprobar.
-//		Empleado emple;
-//		Departamento depart;
-//		Integer idEmple, idDepart;
-//		String nombreEmple, nombreDepart;
-//		Double salario;
-//
-//
-//		//Generar emple sin id -> Comprobar si el dpto donde va a estar emple existe -> Si es su jefe, recuperar su id y ponérsela ->
-//		
-//		System.out.println("Nombre: ?");
-//		nombreEmple = IO.readString();
-//		System.out.println("Salario: ?");
-//		salario = IO.readDouble();
-//		System.out.println("Id de su departamento: ?");
-//		idDepart = IO.readInt();
-//		
-//		
-//		//Si el departamento existe, recupera la información del mismo y se la pasa a el objeto empleado.
-//		if(gestor.buscarDepartamento(idDepart).getNombre() != null) {  //Gestor.metodo.getnombre!=null
-//			depart = gestor.buscarDepartamento(idDepart);
-//			
-//			
-//			
-//			emple = new Empleado(nombreEmple, salario, depart);
-//			gestor.add(emple);
-//		}
-//		else {
-//			System.out.println("Departamento no encontrado, introduce nombre de su departamento para crearlo: ?");
-//			nombreDepart = IO.readString();
-//			
-//			//Creo un departamento sin jefe y lo añado, guardándome su id.
-//			depart = new Departamento(nombreDepart);
-//			idDepart = gestor.addDepartSinJefe(depart);
-//			
-//			//Recupero el departamento recién creado
-//			depart = gestor.buscarDepartamento(idDepart);
-//			
-//			//Creo el empleado con los datos y el departamento recién recuperado y me guardo su id
-//			emple = new Empleado(nombreEmple, salario, depart);
-//			
-//			idEmple = gestor.add(emple);
-//			
-//			//Actualizo la información del jefe de departamento. Como es nuevo departamento, asumimos que el primer empleado en él es el jefe.
-//			depart = new Departamento(idDepart, nombreDepart, emple);
-//			
-//			gestor.actualizar(depart);
-
-//			//Asignamos id = 0 a emple para que el departamento se pueda escribir correctamente
-//			emple = new Empleado(0, nombreEmple, salario);
-//
-//			depart = new Departamento(nombreDepart, emple);
-//
-//			depart.setJefe(emple);
-//			
-//			//Añadimos departamento para recuperar su id
-//			gestor.add(depart);
-//			
-//			//Asumimos que como el departamento es nuevo, el jefe va a ser el primer empleado que entra
-//			
-//			//Volvemos a crear el empleado pero con la id del departamento (que ha sido asignada automáticamente) correcta
-//			emple = new Empleado (nombreEmple, salario, gestor.buscarDepartamentoNombre(nombreDepart));
-
-//		}
-
-//		Empleado emple = new Empleado(idEmple, nombreEmple, salario);
-//		emple = new Empleado(nombreEmple, salario);
-//		depart = new Departamento(idDepart, nombreDepart);
-//		// Agrega un departamento a un empleado
-//		depart.agregarDepartamento(emple);
-//		// Agrega un jefe a un departamento
-//		emple.agregarJefe(depart);
-//
-//		
-//			gestor.add(emple);
-
-//	}
-
-//	public static void crearDepart(Gestor gestor) throws SQLException {
-//		Departamento depart;
-//		Empleado emple;
-//		Integer idEmple, idDepart;
-//		String nombreEmple, nombreDepart;
-//		Double salario;
-//
-//		System.out.println("Nombre de su departamento: ?");
-//		nombreDepart = IO.readString();
-//		System.out.println("Id de su jefe: ? ");
-//		idEmple = IO.readInt();
-//		
-//		
-//		
-//		
-//		if(gestor.buscarJefe(idEmple) != null) {
-//			
-//			emple = gestor.buscarJefe(idEmple);
-//			
-//			depart = new Departamento(nombreDepart, emple);
-//			
-//			gestor.add(depart);
-//			
-//		}else {
-//			
-//			System.out.println("Jefe no encontrado, escribe su nombre: ");
-//			nombreEmple = IO.readString();
-//			System.out.println("Salario: ?");
-//			salario = IO.readDouble();
-//			
-//			//Creo un empleado sin departamento y lo añado a la tabla, guardándome su id.
-//			emple = new Empleado(nombreEmple, salario);
-//			idEmple = gestor.add(emple);
-//			
-//			//Recupero el empleado recién creado
-//			emple = new Empleado(idEmple, nombreEmple, salario);
-//			
-//			
-//			//Creo el departamento con los datos y el empleado recién recuperado y me guardo su id (De emple solo necesito el id)
-//
-//			depart = new Departamento(nombreDepart, emple);
-//			idDepart = gestor.add(depart);
-//			
-//			//Actualizo la información del empleado con su departamento
-//			depart = new Departamento(idDepart, nombreDepart, emple);
-//			emple = new Empleado(idEmple, nombreEmple, salario, depart);
-//			
-//			//Actualizo con la información que cambie
-//			gestor.actualizar(emple);
-//			
-//			
-//		}
-//		
-//		
-//		
-//			
-//		
-//		
-//		
-//	}
 
 	private static void mostrarTodo(Gestor gestor) throws SQLException {
 
@@ -349,6 +209,42 @@ public class Principal {
 		}
 
 	}
+	
+	public static void updateEmpleado (Gestor gestor) throws SQLException {
+		Integer id;
+		Empleado emple;
+		Double salario;
+		String nombre;
+		List<Integer>listaIds;
+		boolean check = false;
+		
+		mostrarEmpleados(gestor);
+		System.out.println("Selecciona una id del empleado que quieras modificar");
+		id = IO.readInt();
+		
+		listaIds = gestor.recuperarIdsEmpleados();
+		
+		for (Integer ids : listaIds) {
+			if(id == ids) {
+				check = true;
+				break;
+			}
+		}
+		
+		if(check) {
+		emple = gestor.buscarJefe(id);
+		
+		// syso dime un nombre nuevo jaja
+		emple.setNombre(nombre);
+		
+		}else {
+			System.err.println("Introduce una id que exista");
+			return;
+		}
+		
+		
+		
+	}
 
 	public static void agregarEmpleadoADepartamento(Gestor gestor) throws SQLException {
 		Integer id;
@@ -422,6 +318,8 @@ public class Principal {
 		gestor.deleteEmpleados(id);
 		
 	}
+	
+	
 
 //	private static void mostrarIdsEmpleados(Gestor gestor) {
 //		

@@ -95,10 +95,7 @@ public class Gestor {
 				emple = new Empleado(id, nombre, salario, departamento);
 			}
 
-
 			return emple;
-
-
 
 		} catch (SQLException e) {
 		}
@@ -130,8 +127,6 @@ public class Gestor {
 			}
 
 			return depart;
-
-
 
 		} catch (SQLException e) {
 		}
@@ -172,7 +167,6 @@ public class Gestor {
 		return new Departamento(id, nombreDepartamento);
 
 	}
-
 
 	public boolean actualizar(Empleado emple) throws SQLException {
 
@@ -251,30 +245,30 @@ public class Gestor {
 		String sentencia = """
 				DELETE FROM empleados WHERE ID = ?
 				""";
-		
+
 		try {
 			PreparedStatement ps = conexion.prepareStatement(sentencia);
-			
+
 			conexion.setAutoCommit(false);
-			
+
 			ps.setInt(1, id);
-			
+
 			eliminados = ps.executeUpdate();
-			
+
 			sentencia = """
-					UPDATE departamentos SET jefe = NULL WHERE jefe = ? 
+					UPDATE departamentos SET jefe = NULL WHERE jefe = ?
 					""";
-			
+
 			ps = conexion.prepareStatement(sentencia);
-			
+
 			ps.setInt(1, id);
-			
+
 			modificados = ps.executeUpdate();
-			
+
 			conexion.commit();
-			
+
 			return check;
-			
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -285,10 +279,27 @@ public class Gestor {
 				e1.printStackTrace();
 			}
 		}
-		
+
 		return check;
+
+	}
+	
+	
+	public List<Integer> recuperarIdsEmpleados() throws SQLException{
+		List<Integer> listaIds = new ArrayList<Integer>();
 		
+		String sql = """
+					SELECT id FROM empleados
+				""";
 		
+		PreparedStatement ps = conexion.prepareStatement(sql);
+		
+		ResultSet rs = ps.executeQuery();
+		
+		while(rs.next()) {
+		listaIds.add(rs.getInt(1));
+		}
+		return listaIds;
 	}
 
 	public void cerrarGestor() {
@@ -325,7 +336,7 @@ public class Gestor {
 
 			sentenciaEmpleados = """
 					CREATE TABLE IF NOT EXISTS empleados (
-					id INT PRIMARY KEY AUTOINCREMENT,
+					id INT AUTO_INCREMENT PRIMARY KEY,
 					nombre VARCHAR(255) NOT NULL,
 					salario DECIMAL(12,2) DEFAULT 0.0,
 					departamento INT
@@ -334,20 +345,18 @@ public class Gestor {
 					""";
 			sentenciaDepartamentos = """
 					CREATE TABLE IF NOT EXISTS departamentos (
-					id INT PRIMARY KEY AUTOINCREMENT,
+					id INT AUTO_INCREMENT PRIMARY KEY,
 					nombre VARCHAR(255) NOT NULL,
 					jefe INT
 					)
 					""";
 
-		}
-
-		try {
-			conexion.createStatement().executeUpdate(sentenciaEmpleados);
-			conexion.createStatement().executeUpdate(sentenciaDepartamentos);
-		} catch (Exception e) {
-			// TODO: handle exception
+			try {
+//			System.out.println("PROBANDO ");
+				conexion.createStatement().executeUpdate(sentenciaEmpleados);
+				conexion.createStatement().executeUpdate(sentenciaDepartamentos);
+			} catch (Exception e) {
+			}
 		}
 	}
-
 }
