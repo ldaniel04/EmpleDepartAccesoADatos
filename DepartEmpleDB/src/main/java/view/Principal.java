@@ -78,7 +78,16 @@ public class Principal {
 					}
 					break;
 				case 4:
-					eliminar(gestor);
+					System.out.println("1 Empleado\n2 Departamento");
+					subopcion = IO.readInt();
+					if (subopcion == 1) {
+						eliminarEmpleado(gestor);
+					} else if (subopcion == 2) {
+						eliminarDepartamento(gestor);
+					} else {
+						System.err.println("No ha escogido una opción válida, retornando al menú de opciones...");
+						return;
+					}
 					break;
 
 				case 5:
@@ -378,7 +387,7 @@ public class Principal {
 		
 	}
 	
-	private static void eliminar(Gestor gestor) throws SQLException {
+	private static void eliminarEmpleado(Gestor gestor) throws SQLException {
 		Integer id;
 		
 		mostrarEmpleados(gestor);
@@ -387,6 +396,18 @@ public class Principal {
 		id = IO.readInt();
 		
 		gestor.deleteEmpleados(id);
+		
+	}
+	
+	private static void eliminarDepartamento(Gestor gestor) throws SQLException {
+		Integer id;
+		
+		mostrarDepartamentos(gestor);
+		System.out.println("Introduce id a eliminar");
+		
+		id = IO.readInt();
+		
+		gestor.deleteDepartamentos(id);
 		
 	}
 	
