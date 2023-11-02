@@ -1,6 +1,6 @@
 package dao;
 
-import java.beans.Statement;
+import java.sql.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,7 +14,7 @@ public class Gestor {
 
 	private Connection conexion = null;
 	private boolean comprobacion = false;
-	private PreparedStatement ps;
+//	private PreparedStatement ps;
 
 	public Gestor() {
 		conexion = Bdd.getConnection();
@@ -22,79 +22,55 @@ public class Gestor {
 
 	}
 
-	public int add(Empleado emple) throws SQLException {
-		int anadidos, ultimaId = 0;
-		String sentenceSQL = """
-				INSERT INTO empleados (nombre, salario, departamento)
-				VALUES (?,?,?)
-				""";
-		ps = conexion.prepareStatement(sentenceSQL, java.sql.Statement.RETURN_GENERATED_KEYS);
-//		ps.setInt(1, emple.getId());
-		ps.setString(1, emple.getNombre());
-		ps.setDouble(2, emple.getSalario());
-		ps.setInt(3, emple.getDepartamento().getId());
+	public boolean addEmpleadoSinDepartamento(Empleado emple) {
 
-		anadidos = ps.executeUpdate();
-
-		if (anadidos > 0) {
-			ResultSet rs = ps.getGeneratedKeys();
-			rs.next();
-			ultimaId = rs.getInt(1);
-		}
-
-		return ultimaId;
-	}
-
-	public int add(Departamento depart) throws SQLException {
-		int anadidos, ultimaId = 0;
-		String sentenceSQL = """
-				INSERT INTO departamentos (nombre, jefe)
+		String sql = """
+				INSERT into empleados(nombre, salario)
 				VALUES (?,?)
 				""";
-		ps = conexion.prepareStatement(sentenceSQL, java.sql.Statement.RETURN_GENERATED_KEYS);
-//		ps.setInt(1, depart.getId());
-		ps.setString(1, depart.getNombre());
-		ps.setInt(2, depart.getJefe().getId());
 
-		anadidos = ps.executeUpdate();
+		try {
+			PreparedStatement ps = conexion.prepareStatement(sql);
+			ps.setString(1, emple.getNombre());
+			ps.setDouble(2, emple.getSalario());
 
-		if (anadidos > 0) {
-			ResultSet rs = ps.getGeneratedKeys();
-			rs.next();
-			ultimaId = rs.getInt(1);
+			return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
-		return ultimaId;
+		return false;
+
 	}
 
-	public int addDepartSinJefe(Departamento depart) throws SQLException {
+	public boolean addDepartamentoSinJefe(Departamento depart) {
 
-		int anadidos, ultimaId = 0;
-		String sentenceSQL = """
+		String sql = """
+
 				INSERT INTO departamentos (nombre)
 				VALUES (?)
+
 				""";
-		ps = conexion.prepareStatement(sentenceSQL, java.sql.Statement.RETURN_GENERATED_KEYS);
-//		ps.setInt(1, depart.getId());
-		ps.setString(1, depart.getNombre());
 
-		anadidos = ps.executeUpdate();
+		try {
+			PreparedStatement ps = conexion.prepareStatement(sql);
+			ps.setString(1, depart.getNombre());
 
-		if (anadidos > 0) {
-			
-			ResultSet rs = ps.executeQuery("SELECT last_insert_rowid()");
-			if (rs.next()) {
-				ultimaId = rs.getInt(1);
-			};
+			return ps.executeUpdate() > 0;
 
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
-		return ultimaId;
+		return false;
 
 	}
 
 	private Empleado leerEmple(ResultSet resultados) { // REVISARLOS DE NUEVO
 
+		Empleado emple;
 		Integer id;
 		String nombre;
 		Double salario;
@@ -111,26 +87,18 @@ public class Gestor {
 			salario = resultados.getDouble("salario");
 			departId = resultados.getInt("departamento");
 
-			departamento = buscarDepartamento(departId);
+			if (departId == 0) {
+				emple = new Empleado(id, nombre, salario);
+			} else {
+				departamento = buscarDepartamento(departId);
 
-			Empleado emple = new Empleado(id, nombre, salario);
+				emple = new Empleado(id, nombre, salario, departamento);
+			}
 
-			// Agregamos el jefe al departamento recuperado
-			emple.agregarJefe(departamento);
-
-			// Agregamos al empleado el departamento
-			departamento.agregarDepartamento(emple);
 
 			return emple;
 
-//			departamento = departamentoPorId(id,nombre,salario,departId);
-//
-//			return new Empleado(id, nombre, salario, departamento);
-// 			Guardamos el departamento donde está el empleado con un método leerdepart_2,
-// 			que devolvería un objeto departamento
-// 			y para crear ese objeto departamento le pasamos los campos que ya tenemos de
-//			 empleado ?
-//			 SELECT * FROM DEPARTAMENTO WHERE ID = id
+
 
 		} catch (SQLException e) {
 		}
@@ -139,6 +107,7 @@ public class Gestor {
 
 	private Departamento leerDepart(ResultSet resultados) {// REVISARLOS DE NUEVO
 
+		Departamento depart;
 		Integer id;
 		String nombre;
 		Empleado jefe;
@@ -153,19 +122,16 @@ public class Gestor {
 			nombre = resultados.getString("nombre");
 			idJefe = resultados.getInt("jefe");
 
-			// Primero buscamos el jefe que tiene el departamento
-			jefe = buscarJefe(idJefe);
+			if (idJefe == 0) {
+				depart = new Departamento(id, nombre);
+			} else {
+				jefe = buscarJefe(idJefe);
+				depart = new Departamento(id, nombre, jefe);
+			}
 
-//			jefe = empleadoPorId(idJefe);
+			return depart;
 
-//			return new Departamento(id, nombre);
 
-			// Segundo, creamos el departamento solo con los campos id y nombre
-			Departamento depart = new Departamento(id, nombre);
-			// Tercero, agregamos este departamento al jefe que hemos recuperado
-			depart.agregarDepartamento(jefe);
-			// Cuarto, agregamos el jefe a este departamento
-			jefe.agregarJefe(depart);
 
 		} catch (SQLException e) {
 		}
@@ -178,7 +144,7 @@ public class Gestor {
 				WHERE id = ?
 				""";
 
-		ps = conexion.prepareStatement(sentencia);
+		PreparedStatement ps = conexion.prepareStatement(sentencia);
 		ps.setInt(1, id);
 		ResultSet rs = ps.executeQuery();
 
@@ -197,7 +163,7 @@ public class Gestor {
 				WHERE id = ?
 				""";
 
-		ps = conexion.prepareStatement(sentencia);
+		PreparedStatement ps = conexion.prepareStatement(sentencia);
 		ps.setInt(1, id);
 		ResultSet rs = ps.executeQuery();
 
@@ -207,32 +173,6 @@ public class Gestor {
 
 	}
 
-//	private Departamento departamentoPorId(Integer idEmpleado, String nombre,  Double salario, Integer idDepartamento) throws SQLException {//REVISARLOS DE NUEVO
-//
-//		String nombreDepartamento;
-//		Integer idDpto;
-//		Departamento dp;
-//		
-//		String consultaSQL = """
-//				SELECT nombre, jefe 
-//				FROM departamentos 
-//				WHERE id = ?
-//				""";
-//		ps = conexion.prepareStatement(consultaSQL);
-//		ps.setInt(1, idDepartamento);
-//		
-//		ResultSet rs = ps.executeQuery();
-//		while (rs.next()) {
-//			idDpto = rs.getInt("id");
-//			nombreDepartamento = rs.getString("nombre");
-//		}
-//		dp = new Departamento(idDpto, nombreDepartamento, new Empleado(idEmpleado, nombre, salario,idDpto));
-////		comprobacion = 
-//	}
-
-//	private Empleado empleadoPorId(int idEmpleado) {//REVISARLOS DE NUEVO
-//
-//	}
 
 	public boolean actualizar(Empleado emple) throws SQLException {
 
@@ -241,11 +181,11 @@ public class Gestor {
 				SET nombre = ?, salario = ?, departamento = ?
 				WHERE id = ?
 				""";
-		ps = conexion.prepareStatement(sentenciaSQL);
-		ps.setString(2, emple.getNombre());
-		ps.setDouble(3, emple.getSalario());
-		ps.setInt(4, emple.getDepartamento().getId());
-		ps.setInt(1, emple.getId());
+		PreparedStatement ps = conexion.prepareStatement(sentenciaSQL);
+		ps.setString(1, emple.getNombre());
+		ps.setDouble(2, emple.getSalario());
+		ps.setInt(3, emple.getDepartamento().getId());
+		ps.setInt(4, emple.getId());
 
 		comprobacion = ps.executeUpdate() > 0;
 
@@ -259,10 +199,10 @@ public class Gestor {
 				SET nombre = ?, jefe = ?
 				WHERE id = ?
 				""";
-		ps = conexion.prepareStatement(sentenciaSQL);
-		ps.setString(2, depart.getNombre());
-		ps.setInt(3, depart.getJefe().getId());
-		ps.setInt(1, depart.getId());
+		PreparedStatement ps = conexion.prepareStatement(sentenciaSQL);
+		ps.setString(1, depart.getNombre());
+		ps.setInt(2, depart.getJefe().getId());
+		ps.setInt(3, depart.getId());
 
 		comprobacion = ps.executeUpdate() > 0;
 
@@ -276,7 +216,7 @@ public class Gestor {
 				SELECT * FROM empleados
 				""";
 
-		ps = conexion.prepareStatement(sentencia);
+		PreparedStatement ps = conexion.prepareStatement(sentencia);
 		ResultSet rs = ps.executeQuery();
 
 		while (rs.next()) {
@@ -294,7 +234,7 @@ public class Gestor {
 				SELECT * FROM departamentos
 				""";
 
-		ps = conexion.prepareStatement(sentencia);
+		PreparedStatement ps = conexion.prepareStatement(sentencia);
 		ResultSet rs = ps.executeQuery();
 
 		while (rs.next()) {
@@ -305,31 +245,50 @@ public class Gestor {
 
 	}
 
-//	public boolean deleteEmpleados(int id, String tabla) {
-//		
-//		String sentencia = """
-//				DELETE * FROM empleados WHERE ID = ?
-//				""";
-//		
-//		ps = conexion.prepareStatement(sentencia);
-//		
-//		
-//	}
-
-	public boolean deleteJefe() throws SQLException {
-
-		String setenciaSQL = """
-				UPDATE departamento
-				SET jefe = null
-				WHERE jefe = ?
+	public boolean deleteEmpleados(int id) {
+		int eliminados, modificados;
+		boolean check = false;
+		String sentencia = """
+				DELETE FROM empleados WHERE ID = ?
 				""";
-
-		String subSentenciaSQL = """
-				DELETE *
-				FROM empleado
-				WHERE ID = ?
-				""";
-		ps = conexion.prepareStatement(setenciaSQL);
+		
+		try {
+			PreparedStatement ps = conexion.prepareStatement(sentencia);
+			
+			conexion.setAutoCommit(false);
+			
+			ps.setInt(1, id);
+			
+			eliminados = ps.executeUpdate();
+			
+			sentencia = """
+					UPDATE departamentos SET jefe = NULL WHERE jefe = ? 
+					""";
+			
+			ps = conexion.prepareStatement(sentencia);
+			
+			ps.setInt(1, id);
+			
+			modificados = ps.executeUpdate();
+			
+			conexion.commit();
+			
+			return check;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			try {
+				conexion.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		
+		return check;
+		
+		
 	}
 
 	public void cerrarGestor() {
