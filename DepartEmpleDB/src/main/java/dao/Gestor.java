@@ -284,12 +284,74 @@ public class Gestor {
 
 	}
 	
+	public boolean deleteDepartamentos(int id) {
+		int eliminados, modificados;
+		boolean check = false;
+		String sentencia = """
+				DELETE FROM departamentos WHERE ID = ?
+				""";
+
+		try {
+			PreparedStatement ps = conexion.prepareStatement(sentencia);
+
+			conexion.setAutoCommit(false);
+
+			ps.setInt(1, id);
+
+			eliminados = ps.executeUpdate();
+
+			sentencia = """
+					UPDATE empleados SET departamento = NULL WHERE departamento = ?
+					""";
+
+			ps = conexion.prepareStatement(sentencia);
+
+			ps.setInt(1, id);
+
+			modificados = ps.executeUpdate();
+
+			conexion.commit();
+
+			return check;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			try {
+				conexion.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+
+		return check;
+
+	}
+	
 	
 	public List<Integer> recuperarIdsEmpleados() throws SQLException{
 		List<Integer> listaIds = new ArrayList<Integer>();
 		
 		String sql = """
 					SELECT id FROM empleados
+				""";
+		
+		PreparedStatement ps = conexion.prepareStatement(sql);
+		
+		ResultSet rs = ps.executeQuery();
+		
+		while(rs.next()) {
+		listaIds.add(rs.getInt(1));
+		}
+		return listaIds;
+	}
+	
+	public List<Integer> recuperarIdsDepartamentos() throws SQLException{
+		List<Integer> listaIds = new ArrayList<Integer>();
+		
+		String sql = """
+					SELECT id FROM departamentos
 				""";
 		
 		PreparedStatement ps = conexion.prepareStatement(sql);
@@ -351,12 +413,14 @@ public class Gestor {
 					)
 					""";
 
-			try {
-//			System.out.println("PROBANDO ");
+			
+		}
+		try {
+			System.out.println("PROBANDO ");
 				conexion.createStatement().executeUpdate(sentenciaEmpleados);
 				conexion.createStatement().executeUpdate(sentenciaDepartamentos);
 			} catch (Exception e) {
+				System.err.println("No se ha realizado conexión con la base de datos");
 			}
-		}
 	}
 }

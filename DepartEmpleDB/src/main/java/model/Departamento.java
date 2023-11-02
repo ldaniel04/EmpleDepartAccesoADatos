@@ -32,12 +32,12 @@ public class Departamento {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return id + "|" + nombre + "|" + jefe;
+		return id + "     |     " + nombre + "     |      " + jefe;
 	}
 	
 	public String mostrarInfoDepartamento2() {
 		if (this.jefe != null) {
-			return id + "|" + nombre + "|" + jefe.getId();
+			return id + "      |   " + nombre + "        |   " + jefe.getId();
 		} else {
 			return this.toString();
 		}

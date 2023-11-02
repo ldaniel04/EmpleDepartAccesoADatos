@@ -42,12 +42,12 @@ public class Empleado {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return id + "|" + nombre + "|" + salario + "|" + departamento;
+		return id + "    |    " + nombre + "    |    " + salario + "    |    " + departamento;
 	}
 
 	public String mostrarInfoEmpleado2() {
 		if (this.departamento != null) {
-			return id + "|" + nombre + "|" + salario + "|" + departamento.getId();
+			return id + "    |    " + nombre + "    |    " + salario + "    |    " + departamento.getId();
 		} else {
 			return this.toString();
 		}

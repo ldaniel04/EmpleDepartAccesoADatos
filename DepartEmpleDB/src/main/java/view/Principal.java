@@ -66,7 +66,16 @@ public class Principal {
 					mostrarTodo(gestor);
 					break;
 				case 3:
-					// update();
+					System.out.println("1 Empleado\n2 Departamento");
+					subopcion = IO.readInt();
+					if (subopcion == 1) {
+						updateEmpleado(gestor);
+					} else if (subopcion == 2) {
+						updateDepartamento(gestor);
+					} else {
+						System.err.println("No ha escogido una opción válida, retornando al menú de opciones...");
+						return;
+					}
 					break;
 				case 4:
 					eliminar(gestor);
@@ -102,9 +111,14 @@ public class Principal {
 		Empleado emple;
 		String nombre;
 		Double salario;
+		
 
+		
 		System.out.println("Nombre?: ");
 		nombre = IO.readString();
+		if (nombre == "") {
+			return;
+		}
 		System.out.println("Salario?: ");
 		salario = IO.readDouble();
 
@@ -121,6 +135,10 @@ public class Principal {
 
 		System.out.println("Nombre?: ");
 		nombre = IO.readString();
+		
+		if (nombre == "") {
+			return;
+		}
 
 		depart = new Departamento(nombre);
 
@@ -233,16 +251,67 @@ public class Principal {
 		
 		if(check) {
 		emple = gestor.buscarJefe(id);
+		System.out.println(emple);
 		
-		// syso dime un nombre nuevo jaja
-		emple.setNombre(nombre);
+		System.out.println("¿Qué nombre le quieres poner al empleado? ");
+		nombre = IO.readString();
 		
+		if(nombre.length() <= 2) {
+			System.out.println("Nombre no cambiado");
+		} else {
+			emple.setNombre(nombre);
+			System.out.println("Nombre cambiado");
+		}
+		
+		System.out.println("¿Qué salario tendrá " + nombre + "?");
+		salario = IO.readDouble();
+		
+		if (salario != null) {
+			emple.setSalario(salario);
+		}
+		
+		gestor.actualizar(emple);
 		}else {
 			System.err.println("Introduce una id que exista");
 			return;
 		}
 		
+	}
+	
+	public static void updateDepartamento (Gestor gestor) throws SQLException {
+		Integer id;
+		Departamento depart;
+		String nombre;
+		List<Integer>listaIds;
+		boolean check = false;
 		
+		mostrarDepartamentos(gestor);
+		System.out.println("Selecciona una id del empleado que quieras modificar");
+		id = IO.readInt();
+		
+		listaIds = gestor.recuperarIdsDepartamentos();
+		
+		for (Integer ids : listaIds) {
+			if(id == ids) {
+				check = true;
+				break;
+			}
+		}
+		
+		if(check) {
+		depart = gestor.buscarDepartamento(id);
+		
+		System.out.println("¿Qué nombre le quieres poner al departamento con nombre actual " + depart.getNombre() + "? ");
+		nombre = IO.readString();
+		
+		if(nombre.length() <= 2) {
+			System.out.println("Nombre no cambiado");
+		} else {
+			depart.setNombre(nombre);
+			System.out.println("Nombre cambiado");
+		}
+		gestor.actualizar(depart);
+		} 
 		
 	}
 
@@ -274,6 +343,8 @@ public class Principal {
 				.println("Actualizado. Has agregado a " + emple.mostrarInfoEmpleado2() + " al departamento " + depart);
 
 	}
+	
+	
 	
 	public static void agregarJefeADepartamento(Gestor gestor) throws SQLException{
 		Integer id;
