@@ -23,6 +23,11 @@ public class Principal {
 
 	}
 
+	/**
+	 * Menu principal del programa que incluye un crud y permite añadir o actualizar el departamento en el que está un empleado y el jefe que tiene un 
+	 * departamento
+	 * @param gestor
+	 */
 	private static void menuPpal(Gestor gestor) {
 		int key = 0, subopcion = 0;
 
@@ -41,27 +46,17 @@ public class Principal {
 				System.out.println(contenido);
 				switch (key = IO.readInt()) {
 				case 1:
-					// add();
-//				System.out.println("1 Empleado\n2 Departamento");
-//				if (key == 1) {
-//					// Objeto.addEmpleado();
-//				} else {
-//					// Objeto.addDepart();
-//				}
 
 					System.out.println("1 Empleado\n2 Departamento");
 					subopcion = IO.readInt();
 					if (subopcion == 1) {
-//					crearEmple(gestor);	
 						crearEmpleSinJefe(gestor);
 					} else {
-//					crearDepart(gestor);
 						crearDepartSinJefe(gestor);
 					}
 
 					break;
 				case 2:
-					// show();
 
 					mostrarTodo(gestor);
 					break;
@@ -73,7 +68,7 @@ public class Principal {
 					} else if (subopcion == 2) {
 						updateDepartamento(gestor);
 					} else {
-						System.err.println("No ha escogido una opción válida, retornando al menú de opciones...");
+						System.out.println("No ha escogido una opción válida, retornando al menú de opciones...");
 						return;
 					}
 					break;
@@ -85,7 +80,7 @@ public class Principal {
 					} else if (subopcion == 2) {
 						eliminarDepartamento(gestor);
 					} else {
-						System.err.println("No ha escogido una opción válida, retornando al menú de opciones...");
+						System.out.println("No ha escogido una opción válida, retornando al menú de opciones...");
 						return;
 					}
 					break;
@@ -112,10 +107,18 @@ public class Principal {
 		} while (key != 0);
 	}
 
+	/**
+	 * Cierra la conexion
+	 * @param gestor
+	 */
 	private static void cerrarGestor(Gestor gestor) {
 		gestor.cerrarGestor();
 	}
 
+	/**
+	 * Crea y añade empleados sin departamento. Evitando así el problema de la referencia cíclica
+	 * @param gestor
+	 */
 	public static void crearEmpleSinJefe(Gestor gestor) {
 		Empleado emple;
 		String nombre;
@@ -137,6 +140,10 @@ public class Principal {
 
 	}
 
+	/**
+	 * Crea y añade departamentos sin jefe. Evitando así el problema de la referencia cíclica
+	 * @param gestor
+	 */
 	public static void crearDepartSinJefe(Gestor gestor) {
 
 		Departamento depart;
@@ -155,6 +162,11 @@ public class Principal {
 
 	}
 
+	/**
+	 * Muestra todos los empleados y departamentos
+	 * @param gestor
+	 * @throws SQLException
+	 */
 	private static void mostrarTodo(Gestor gestor) throws SQLException {
 
 		List<Empleado> listaEmple;
@@ -168,6 +180,7 @@ public class Principal {
 		} else {
 			System.out.println("MOSTRANDO EMPLEADOS\n");
 
+			//La forma de mostrar varía si los empleados tienen o no departamento
 			for (Empleado empleados : listaEmple) {
 				if (empleados.getDepartamento() == null) {
 					System.out.println(empleados);
@@ -183,6 +196,7 @@ public class Principal {
 		} else {
 			System.out.println("\nMOSTRANDO DEPARTAMENTOS\n");
 
+			//La forma de mostrar varía si los departamentos tienen o no jefe
 			for (Departamento departamentos : listaDepart) {
 				if(departamentos.getJefe() == null) {
 					System.out.println(departamentos);
@@ -196,6 +210,11 @@ public class Principal {
 
 	}
 
+	/**
+	 * Muestra solo empleados
+	 * @param gestor
+	 * @throws SQLException
+	 */
 	public static void mostrarEmpleados(Gestor gestor) throws SQLException {
 		List<Empleado> listaEmple;
 
@@ -216,6 +235,11 @@ public class Principal {
 
 	}
 
+	/**
+	 * Muestra solo departamentos
+	 * @param gestor
+	 * @throws SQLException
+	 */
 	public static void mostrarDepartamentos(Gestor gestor) throws SQLException {
 		List<Departamento> listaDepart;
 
@@ -236,7 +260,11 @@ public class Principal {
 		}
 
 	}
-	
+	/**
+	 * Actualiza empleados
+	 * @param gestor
+	 * @throws SQLException
+	 */
 	public static void updateEmpleado (Gestor gestor) throws SQLException {
 		Integer id;
 		Empleado emple;
@@ -286,7 +314,11 @@ public class Principal {
 		}
 		
 	}
-	
+	/**
+	 * Actualiza departamentos
+	 * @param gestor
+	 * @throws SQLException
+	 */
 	public static void updateDepartamento (Gestor gestor) throws SQLException {
 		Integer id;
 		Departamento depart;
@@ -295,7 +327,7 @@ public class Principal {
 		boolean check = false;
 		
 		mostrarDepartamentos(gestor);
-		System.out.println("Selecciona una id del empleado que quieras modificar");
+		System.out.println("Selecciona una id del departamento que quieras modificar");
 		id = IO.readInt();
 		
 		listaIds = gestor.recuperarIdsDepartamentos();
@@ -324,27 +356,56 @@ public class Principal {
 		
 	}
 
+	/**
+	 * Añade un empleado a un departamento
+	 * @param gestor
+	 * @throws SQLException
+	 */
 	public static void agregarEmpleadoADepartamento(Gestor gestor) throws SQLException {
 		Integer id;
 		Empleado emple;
 		Departamento depart;
-
+		List<Integer> listaIds;
+		
+		
+		listaIds = gestor.recuperarIdsEmpleados();
 		mostrarEmpleados(gestor);
 		System.out.println("Selecciona una id de los empleados para agregarla a un departamento");
 		id = IO.readInt();
+		
+		for (Integer id_emple : listaIds) {
+			if(id == id_emple) {
+				continue;
+			}else {
+				System.out.println("Id no encontrada. Retrocediendo al menú");
+				return;
+			}
+		}
 
 		// Busca al empleado
 		emple = gestor.buscarJefe(id);
 
+		
+		listaIds = gestor.recuperarIdsDepartamentos();
 		mostrarDepartamentos(gestor);
-		System.out.println("Selecciona la id del departamento a agregar al siguiente empleado?: " + emple);
+		System.out.println("Selecciona la id del departamento a agregar al siguiente empleado?:");
 		id = IO.readInt();
+		
+		
+		
+		for (Integer id_depart : listaIds) {
+			if(id == id_depart) {
+				continue;
+			}else {
+				System.out.println("Id no encontrada. Retrocediendo al menú");
+				return;
+			}
+		}
 
 		depart = gestor.buscarDepartamento(id);
 
 		depart.agregarDepartamento(emple);
 
-		System.out.println(emple.mostrarInfoEmpleado2() + "\n\n");
 
 		gestor.actualizar(emple);
 
@@ -354,26 +415,52 @@ public class Principal {
 	}
 	
 	
-	
+	/**
+	 * Agrega un jefe a un departamento
+	 * @param gestor
+	 * @throws SQLException
+	 */
 	public static void agregarJefeADepartamento(Gestor gestor) throws SQLException{
 		Integer id;
 		Empleado jefe;
 		Departamento depart;
+		List<Integer> listaIds;
 		
+		
+		listaIds = gestor.recuperarIdsDepartamentos();
 		mostrarDepartamentos(gestor);
 		System.out.println("Selecciona una id de los departamentos para agregarle un jefe");
 		id = IO.readInt();
-		//Busca el dpto seleccionado
-		depart = gestor.buscarDepartamento(id);
 		
+		for (Integer id_depart : listaIds) {
+			if(id == id_depart) {
+				continue;
+			}else {
+				System.out.println("Id no encontrada. Retrocediendo al menú");
+				return;
+			}
+		}
+		
+		
+		depart = gestor.buscarDepartamento(id);
+		listaIds = gestor.recuperarIdsEmpleados();
 		mostrarEmpleados(gestor);
 		System.out.println("Selecciona la id de un empleado para agregarlo como jefe del departamento seleccionado anteriormente: ");
 		id = IO.readInt();
 		
-		//Recuperamos el futuro jefe seleccionado
+		for (Integer id_emple : listaIds) {
+			if(id == id_emple) {
+				continue;
+			}else {
+				System.out.println("Id no encontrada. Retrocediendo al menú");
+				return;
+			}
+		}
+		
+
 		jefe = gestor.buscarJefe(id);
 
-		//Le agrego al departamento
+
 		jefe.agregarJefe(depart);
 		
 		System.out.println(depart.mostrarInfoDepartamento2());
@@ -387,6 +474,11 @@ public class Principal {
 		
 	}
 	
+	/**
+	 * Elimina un empleado llamando al gestor
+	 * @param gestor
+	 * @throws SQLException
+	 */
 	private static void eliminarEmpleado(Gestor gestor) throws SQLException {
 		Integer id;
 		
@@ -398,7 +490,11 @@ public class Principal {
 		gestor.deleteEmpleados(id);
 		
 	}
-	
+	/**
+	 * Elimina un departamento llamando al gestor
+	 * @param gestor
+	 * @throws SQLException
+	 */
 	private static void eliminarDepartamento(Gestor gestor) throws SQLException {
 		Integer id;
 		
@@ -412,14 +508,4 @@ public class Principal {
 	}
 	
 	
-
-//	private static void mostrarIdsEmpleados(Gestor gestor) {
-//		
-//	}
-//
-//	
-//	private static void mostrarIdsDepartamentos(Gestor gestor) {
-//		
-//		
-//	}
 }

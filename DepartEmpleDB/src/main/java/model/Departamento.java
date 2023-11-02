@@ -24,6 +24,11 @@ public class Departamento {
 		this(null, nombre, null);
 	}
 	
+	/**
+	 * Asigna un departamento a un empleado
+	 * 
+	 * @param depart
+	 */
 	public void agregarDepartamento(Empleado emple) {
 		emple.setDepartamento(this);
 	}
@@ -32,12 +37,12 @@ public class Departamento {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return id + "     |     " + nombre + "     |      " + jefe;
+		return id + " | " + nombre + " | " + jefe;
 	}
 	
 	public String mostrarInfoDepartamento2() {
 		if (this.jefe != null) {
-			return id + "      |   " + nombre + "        |   " + jefe.getId();
+			return id + "|" + nombre + " | " + jefe.getId();
 		} else {
 			return this.toString();
 		}
