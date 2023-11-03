@@ -42,7 +42,7 @@ public class Departamento {
 	
 	public String mostrarInfoDepartamento2() {
 		if (this.jefe != null) {
-			return id + "|" + nombre + " | " + jefe.getId();
+			return id + " | " + nombre + " | " + jefe.getId();
 		} else {
 			return this.toString();
 		}

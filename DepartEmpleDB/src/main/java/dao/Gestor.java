@@ -260,7 +260,7 @@ public class Gestor {
 	 * @return una lista de empleados
 	 * @throws SQLException
 	 */
-	public List<Empleado> mostrarEmpleados() throws SQLException {// TOCAR CANDO METODOS PARA LEER LISTOS
+	public List<Empleado> mostrarEmpleados() throws SQLException {
 
 		List<Empleado> lista = new ArrayList<Empleado>();
 		String sentencia = """
@@ -283,7 +283,7 @@ public class Gestor {
 	 * @return
 	 * @throws SQLException
 	 */
-	public List<Departamento> mostrarDepartamentos() throws SQLException {// TOCAR CANDO METODOS PARA LEER LISTOS
+	public List<Departamento> mostrarDepartamentos() throws SQLException {
 
 		List<Departamento> lista = new ArrayList<Departamento>();
 		String sentencia = """

@@ -11,9 +11,6 @@ public class Empleado {
 	private Double salario;
 	private Departamento departamento;
 
-//	public Empleado(Integer id) {
-//		this();
-//	}
 
 	public Empleado(Integer id, String nombre, Double salario) {
 		this.id = id;
@@ -42,12 +39,12 @@ public class Empleado {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return id + "    |    " + nombre + "    |    " + salario + "    |    " + departamento;
+		return id + " | " + nombre + " | " + salario + " | " + departamento;
 	}
 
 	public String mostrarInfoEmpleado2() {
 		if (this.departamento != null) {
-			return id + "    |    " + nombre + "    |    " + salario + "    |    " + departamento.getId();
+			return id + " | " + nombre + " | " + salario + " | " + departamento.getId();
 		} else {
 			return this.toString();
 		}

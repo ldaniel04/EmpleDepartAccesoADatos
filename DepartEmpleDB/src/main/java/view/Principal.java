@@ -39,7 +39,7 @@ public class Principal {
 						1 - Añadir algun empleado o departamento
 						2 - Para mostrar los empleados o departamentos
 						3 - Para actualizar algun empleado o departamento
-						4 - Para eleminar algun empleado o departamento
+						4 - Para eliminar algun empleado o departamento
 						5 - Asigna un departamento a un empleado
 						6 - Asigna un jefe a un departamento
 						 """;
